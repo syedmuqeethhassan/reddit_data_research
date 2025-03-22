@@ -1,0 +1,182 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Langchain Chatbot</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+        .user-message {
+            background-color: #e3f2fd;
+            margin-left: auto;
+            text-align: right;
+        }
+        .ai-message {
+            background-color: #f5f5f5;
+        }
+        .input-container {
+            display: flex;
+            gap: 10px;
+        }
+        #message-input {
+            flex-grow: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .upload-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px dashed #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Langchain Chatbot</h1>
+    
+    <div class="upload-section">
+        <h2>Initialize Knowledge Base</h2>
+        <p>Upload a text file to initialize the chatbot's knowledge base:</p>
+        <input type="file" id="knowledge-file" accept=".txt">
+        <button id="upload-button">Upload & Initialize</button>
+        <div id="upload-status"></div>
+    </div>
+    
+    <div class="chat-container" id="chat-container"></div>
+    
+    <div class="input-container">
+        <input type="text" id="message-input" placeholder="Type your message here..." disabled>
+        <button id="send-button" disabled>Send</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatContainer = document.getElementById('chat-container');
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const uploadButton = document.getElementById('upload-button');
+            const knowledgeFile = document.getElementById('knowledge-file');
+            const uploadStatus = document.getElementById('upload-status');
+            
+            // Function to add a message to the chat container
+            function addMessage(content, isUser = false) {
+                const messageDiv = document.createElement('div');
+                messageDiv.classList.add('message');
+                messageDiv.classList.add(isUser ? 'user-message' : 'ai-message');
+                messageDiv.textContent = content;
+                chatContainer.appendChild(messageDiv);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+            
+            // Function to send a message to the server
+            async function sendMessage() {
+                const message = messageInput.value.trim();
+                if (!message) return;
+                
+                // Add user message to chat
+                addMessage(message, true);
+                messageInput.value = '';
+                
+                try {
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ message })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        // Add AI response to chat
+                        addMessage(data.response);
+                    } else {
+                        addMessage(`Error: ${data.error}`);
+                    }
+                } catch (error) {
+                    addMessage(`Network error: ${error.message}`);
+                }
+            }
+            
+            // Function to initialize knowledge base with uploaded file
+            async function initializeKnowledgeBase() {
+                if (!knowledgeFile.files[0]) {
+                    uploadStatus.textContent = 'Please select a file first';
+                    return;
+                }
+                
+                uploadStatus.textContent = 'Uploading and initializing...';
+                
+                const formData = new FormData();
+                formData.append('file', knowledgeFile.files[0]);
+                
+                try {
+                    const response = await fetch('/initialize', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        uploadStatus.textContent = 'Knowledge base initialized successfully!';
+                        messageInput.disabled = false;
+                        sendButton.disabled = false;
+                        
+                        // Add welcome message
+                        addMessage('Knowledge base initialized. How can I help you today?');
+                    } else {
+                        uploadStatus.textContent = `Error: ${data.error}`;
+                    }
+                } catch (error) {
+                    uploadStatus.textContent = `Network error: ${error.message}`;
+                }
+            }
+            
+            // Event listeners
+            sendButton.addEventListener('click', sendMessage);
+            
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            uploadButton.addEventListener('click', initializeKnowledgeBase);
+        });
+    </script>
+</body>
+</html> -->
